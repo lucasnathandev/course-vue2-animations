@@ -14,12 +14,16 @@
         Alternar
       </button>
       <transition
-        enter-class=""
-        enter-active-class="animate__animated animate__bounceInLeft"
-        enter-to-class=""
-        leave-class=""
-        leave-active-class="animate__animated animate__bounceOutDown"
-        leave-to-class=""
+        appear
+        @before-enter="beforeEnter"
+        @enter="enter"
+        @after-enter="afterEnter"
+        @enter-cancelled="enterCancelled"
+        @before-leave="beforeLeave"
+        @leave="leave"
+        @after-leave="afterLeave"
+        @leave-cancelled="leaveCancelled"
+        :css="false"
       >
         <div class="alert alert-primary" v-if="mostrar">Animações no Vue</div>
       </transition>
@@ -35,9 +39,67 @@ export default {
       mostrar: true,
     };
   },
+  methods: {
+    beforeEnter(el) {
+      el.style.opacity = 0;
+      el.style.transition = "opacity 0.1s";
+      console.log("beforeEnter");
+    },
+    enter(el, done) {
+      console.log("enter");
+      let count = 0;
+      const interval = setInterval(() => {
+        el.style.opacity = count * 0.1;
+        count++;
+        if (count > 10) {
+          clearInterval(interval);
+          done();
+        }
+      }, 100);
+    },
+    afterEnter(el) {
+      el;
+      console.log("afterEnter");
+    },
+    enterCancelled(el) {
+      el;
+      console.log("enterCancelled");
+    },
+    beforeLeave(el) {
+      el.style.transition = "width 0.1s ease-in-out";
+      el.style.overflow = "hidden";
+      el.style.whiteSpace = "nowrap";
+    },
+    leave(el, done) {
+      console.log("leave");
+      let count = 0;
+      const width = el.offsetWidth;
+      const interval = setInterval(() => {
+        el.style.width = width * (1 - count / 10) + "px";
+        count++;
+        console.log(el.style.width);
+        if (count > 10) {
+          clearInterval(interval);
+          done();
+        }
+      }, 100);
+    },
+    afterLeave(el) {
+      el;
+      console.log("afterLeave");
+    },
+    leaveCancelled(el) {
+      el;
+      console.log("leaveCancelled");
+    },
+  },
 };
 </script>
-
+<style>
+body {
+  overflow: hidden;
+}
+</style>
 <style scoped>
 .fade-enter,
 .fade-leave-to {
