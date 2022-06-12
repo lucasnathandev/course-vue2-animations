@@ -1,28 +1,99 @@
 <template>
   <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+    .
+    <div class="jumbotron jumbotron-fluid">
+      <div class="container">
+        <h1 class="display-4">Animações</h1>
+        <p class="lead">
+          Treinando transição/animação de elementos/components no Vue.
+        </p>
+      </div>
+    </div>
+    <div class="container">
+      <button class="btn btn-primary mb-3" @click="mostrar = !mostrar">
+        Alternar
+      </button>
+      <transition
+        enter-class=""
+        enter-active-class="animate__animated animate__bounceInLeft"
+        enter-to-class=""
+        leave-class=""
+        leave-active-class="animate__animated animate__bounceOutDown"
+        leave-to-class=""
+      >
+        <div class="alert alert-primary" v-if="mostrar">Animações no Vue</div>
+      </transition>
+    </div>
   </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
-
 export default {
-  name: 'App',
-  components: {
-    HelloWorld
-  }
-}
+  name: "App",
+  data() {
+    return {
+      mostrar: true,
+    };
+  },
+};
 </script>
 
-<style lang="scss">
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
+<style scoped>
+.fade-enter,
+.fade-leave-to {
+  opacity: 0;
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 1s;
+}
+
+.fade-enter-to,
+.fade-leave {
+  opacity: 1;
+}
+
+.zoom-enter,
+.zoom-leave-to {
+  transform: scale(0);
+}
+
+.zoom-enter-active,
+.zoom-leave-active {
+  transition: transform 0.5s;
+}
+
+.zoom-enter-to,
+.zoom-leave {
+  transform: scale(1);
+}
+
+.slide-enter {
+  opacity: 0;
+}
+
+.slide-enter-active {
+  animation: slide 0.5s ease-in-out forwards;
+  transition: opacity 0.5s;
+}
+
+.slide-leave-active {
+  animation: slide 0.5s ease-in-out reverse;
+  transition: opacity 2s; /* Essa diferença de tempo da transition com a animation causa conflito, por isso
+  a propriedade type='animation' foi inserida no elemento html*/
+}
+
+.slide-leave-to {
+  opacity: 0;
+}
+
+@keyframes slide {
+  0% {
+    transform: translateX(-100px);
+  }
+  100% {
+    transform: translateX(0px);
+  }
 }
 </style>
