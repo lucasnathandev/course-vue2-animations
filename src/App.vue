@@ -1,6 +1,5 @@
 <template>
   <div id="app">
-    .
     <div class="jumbotron jumbotron-fluid">
       <div class="container">
         <h1 class="display-4">Animações</h1>
@@ -10,210 +9,91 @@
       </div>
     </div>
     <div class="container">
-      <button class="btn btn-primary mb-3" @click="mostrar = !mostrar">
-        Alternar
-      </button>
+      <h3 class="font-weight-light">Technologies</h3>
 
-      <div class="form-group">
-        <label for="select-animation">Animações</label>
-        <select
-          id="select-animation"
-          class="form-control"
-          v-model="selectedAnimation"
-        >
-          <option value="fade">Fade</option>
-          <option value="zoom">Zoom</option>
-          <option value="slide">Slide</option>
-        </select>
+      <div class="row">
+        <div class="col-sm-2">
+          <button class="btn btn-info" @click="shuffle">Embaralhar</button>
+        </div>
+        <div class="col-sm-10">
+          <div class="form-group">
+            <label for=""></label>
+            <input
+              @keyup.enter.exact="add"
+              ref="input"
+              type="text"
+              name=""
+              id=""
+              class="form-control"
+              placeholder="Inser a new item and press ENTER"
+              aria-describedby="helpId"
+            />
+            <small id="helpId" class="text-muted">Help text</small>
+          </div>
+        </div>
       </div>
-      <div class="form-group">
-        <label for="select-animation">Component</label>
-        <select
-          id="select-animation"
-          class="form-control"
-          v-model="selectedComponent"
+
+      <transition-group tag="ul" class="list-group" :name="'list'">
+        <li
+          class="list-group-item"
+          v-for="(technology, index) in technologies"
+          :key="technology"
         >
-          <option value="HomeTab">Home</option>
-          <option value="AboutTab">About</option>
-        </select>
-      </div>
-      <transition :name="selectedAnimation" mode="out-in">
-        <!-- appear
-        appear-class=""
-        appear-active-class="animated flipInY"
-        appear-to-class=""
-        @before-appear="beforeAppear"
-        @appear="appear"
-        @after-appear="afterAppear"
-        @appear-cancelled="appearCancelled"
-        enter-active-class="animated bounceInLeft"
-        leave-active-class="animated bounceOutDown" -->
-        <!-- <div :class="alertClasses" :key="alertActual">
-          Animations in Vue ({{ alertActual.toString() }})
-        </div> -->
-        <component :is="selectedComponent"></component>
-      </transition>
+          <span>{{ technology }}</span>
+          <button
+            class="btn btn-danger btn-sm float-right"
+            @click="remove(index)"
+          >
+            X
+          </button>
+        </li></transition-group
+      >
     </div>
   </div>
 </template>
 
 <script>
+import lodash from "lodash";
 export default {
   name: "App",
-  components: {
-    HomeTab: () => import("./components/HomeTab.vue"),
-    AboutTab: () => import("./components/AboutTab.vue"),
-  },
   data() {
     return {
-      mostrar: true,
-      selectedAnimation: "fade",
-      alertActual: "info",
-      selectedComponent: "HomeTab",
+      technologies: ["JavaScript", "VueJS", "VueX", "VueRouter"],
     };
   },
-  computed: {
-    alertClasses() {
-      return {
-        alert: "alert",
-        [`alert-${this.alertActual}`]: true,
-      };
-    },
-  },
   methods: {
-    beforeAppear(el) {
-      console.log("beforeAppear");
-      el;
+    add(event) {
+      const newItem = event.target.value;
+      if (newItem) {
+        const index = Math.floor(Math.random() * this.technologies.length);
+        this.technologies.splice(index, 0, newItem);
+        this.$refs.input.value = "";
+      }
     },
-    appear(el, done) {
-      console.log("appear");
-      el;
-      setTimeout(done, 1000);
+    remove(index) {
+      this.technologies.splice(index, 1);
     },
-    afterAppear(el) {
-      console.log("afterAppear");
-      el;
-    },
-    appearCancelled(el) {
-      el;
-      console.log("appearCancelled");
-    },
-    beforeEnter(el) {
-      el.style.opacity = 0;
-      el.style.transition = "opacity 0.1s";
-      console.log("beforeEnter");
-    },
-    enter(el, done) {
-      console.log("enter");
-      let count = 0;
-      const interval = setInterval(() => {
-        el.style.opacity = count * 0.1;
-        count++;
-        if (count > 10) {
-          clearInterval(interval);
-          done();
-        }
-      }, 100);
-    },
-    afterEnter(el) {
-      el;
-      console.log("afterEnter");
-    },
-    enterCancelled(el) {
-      el;
-      console.log("enterCancelled");
-    },
-    beforeLeave(el) {
-      el.style.transition = "width 0.1s ease-in-out";
-      el.style.overflow = "hidden";
-      el.style.whiteSpace = "nowrap";
-    },
-    leave(el, done) {
-      console.log("leave");
-      let count = 0;
-      const width = el.offsetWidth;
-      const interval = setInterval(() => {
-        el.style.width = width * (1 - count / 10) + "px";
-        count++;
-        console.log(el.style.width);
-        if (count > 10) {
-          clearInterval(interval);
-          done();
-        }
-      }, 100);
-    },
-    afterLeave(el) {
-      el;
-      console.log("afterLeave");
-    },
-    leaveCancelled(el) {
-      el;
-      console.log("leaveCancelled");
+    shuffle() {
+      this.technologies = lodash.shuffle(this.technologies);
     },
   },
 };
 </script>
-<style>
-body {
-  overflow: hidden;
-}
-</style>
 <style scoped>
-.fade-enter,
-.fade-leave-to {
+.list-enter,
+.list-leave-to {
   opacity: 0;
+  transform: translateX(-70px);
 }
 
-.fade-enter-active,
-.fade-leave-active {
-  transition: opacity 1s;
+.list-enter-active,
+.list-leave-active,
+/* New feature */ .list-move {
+  transition: all 1s ease-in-out;
 }
 
-.fade-enter-to,
-.fade-leave {
-  opacity: 1;
-}
-
-.zoom-enter,
-.zoom-leave-to {
-  transform: scale(0);
-}
-
-.zoom-enter-active,
-.zoom-leave-active {
-  transition: transform 0.5s;
-}
-
-.zoom-enter-to,
-.zoom-leave {
-  transform: scale(1);
-}
-
-.slide-enter {
-  opacity: 0;
-}
-
-.slide-enter-active {
-  animation: slide 0.5s ease-in-out forwards;
-  transition: opacity 0.5s;
-}
-
-.slide-leave-active {
-  animation: slide 0.5s ease-in-out reverse;
-  transition: opacity 0.5s; /* Essa diferença de tempo da transition com a animation causa conflito, por isso
-  a propriedade type='animation' foi inserida no elemento html*/
-}
-
-.slide-leave-to {
-  opacity: 0;
-}
-
-@keyframes slide {
-  0% {
-    transform: translateX(-100px);
-  }
-  100% {
-    transform: translateX(0px);
-  }
+.list-leave-active {
+  position: absolute;
+  width: calc(100% - 100px);
 }
 </style>
