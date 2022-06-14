@@ -27,15 +27,14 @@
         </select>
       </div>
       <div class="form-group">
-        <label for="select-animation">Animações</label>
+        <label for="select-animation">Component</label>
         <select
           id="select-animation"
           class="form-control"
-          v-model="alertActual"
+          v-model="selectedComponent"
         >
-          <option value="info">Info</option>
-          <option value="warning">Warning</option>
-          <option value="success">Success</option>
+          <option value="HomeTab">Home</option>
+          <option value="AboutTab">About</option>
         </select>
       </div>
       <transition :name="selectedAnimation" mode="out-in">
@@ -49,9 +48,10 @@
         @appear-cancelled="appearCancelled"
         enter-active-class="animated bounceInLeft"
         leave-active-class="animated bounceOutDown" -->
-        <div :class="alertClasses" :key="alertActual">
+        <!-- <div :class="alertClasses" :key="alertActual">
           Animations in Vue ({{ alertActual.toString() }})
-        </div>
+        </div> -->
+        <component :is="selectedComponent"></component>
       </transition>
     </div>
   </div>
@@ -60,11 +60,16 @@
 <script>
 export default {
   name: "App",
+  components: {
+    HomeTab: () => import("./components/HomeTab.vue"),
+    AboutTab: () => import("./components/AboutTab.vue"),
+  },
   data() {
     return {
       mostrar: true,
       selectedAnimation: "fade",
       alertActual: "info",
+      selectedComponent: "HomeTab",
     };
   },
   computed: {
