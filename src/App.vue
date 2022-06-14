@@ -13,8 +13,33 @@
       <button class="btn btn-primary mb-3" @click="mostrar = !mostrar">
         Alternar
       </button>
-      <transition
-        appear
+
+      <div class="form-group">
+        <label for="select-animation">Animações</label>
+        <select
+          id="select-animation"
+          class="form-control"
+          v-model="selectedAnimation"
+        >
+          <option value="fade">Fade</option>
+          <option value="zoom">Zoom</option>
+          <option value="slide">Slide</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="select-animation">Animações</label>
+        <select
+          id="select-animation"
+          class="form-control"
+          v-model="alertActual"
+        >
+          <option value="info">Info</option>
+          <option value="warning">Warning</option>
+          <option value="success">Success</option>
+        </select>
+      </div>
+      <transition :name="selectedAnimation" mode="out-in">
+        <!-- appear
         appear-class=""
         appear-active-class="animated flipInY"
         appear-to-class=""
@@ -23,9 +48,10 @@
         @after-appear="afterAppear"
         @appear-cancelled="appearCancelled"
         enter-active-class="animated bounceInLeft"
-        leave-active-class="animated bounceOutDown"
-      >
-        <div class="alert alert-primary" v-if="mostrar">Animações no Vue</div>
+        leave-active-class="animated bounceOutDown" -->
+        <div :class="alertClasses" :key="alertActual">
+          Animations in Vue ({{ alertActual.toString() }})
+        </div>
       </transition>
     </div>
   </div>
@@ -37,7 +63,17 @@ export default {
   data() {
     return {
       mostrar: true,
+      selectedAnimation: "fade",
+      alertActual: "info",
     };
+  },
+  computed: {
+    alertClasses() {
+      return {
+        alert: "alert",
+        [`alert-${this.alertActual}`]: true,
+      };
+    },
   },
   methods: {
     beforeAppear(el) {
@@ -159,7 +195,7 @@ body {
 
 .slide-leave-active {
   animation: slide 0.5s ease-in-out reverse;
-  transition: opacity 2s; /* Essa diferença de tempo da transition com a animation causa conflito, por isso
+  transition: opacity 0.5s; /* Essa diferença de tempo da transition com a animation causa conflito, por isso
   a propriedade type='animation' foi inserida no elemento html*/
 }
 
